@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        function myFunction() {
+            var xhr = new XMLHttpRequest();
+            var url = "http://localhost:8080/greeting";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            /*xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var json = JSON.parse(xhr.responseText);
+                    console.log(json.email + ", " + json.password);
+                }
+            };*/
+            var data = JSON.stringify({"email": "hey@mail.com", "password": "101010"},{"email": "hey@mail2.com", "password": "101010"});
+            xhr.send(data);
+        }
+    </script>
+</head>
+<body>
+<p th:text="'Hello, ' + ${name} + '!'" />
+<button onclick="myFunction()">Click me</button>
+</body>
+</html>
