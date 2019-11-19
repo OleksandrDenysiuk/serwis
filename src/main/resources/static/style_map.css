@@ -14,7 +14,6 @@
     text-align: center;
     border-style: solid;
     border-color: grey;
-    display: none;
 }
 
 .img{
@@ -89,10 +88,6 @@
     display: none;
 }
 
-#controlMarkers{
-    display: none;
-}
-
 #chooseFile{
     display: none;
 }
@@ -100,5 +95,11 @@
 #test{
     width: 100px;
     height: 100px;
+}
+
+.thumb {
+    height: 75px;
+    border: 1px solid #000;
+    margin: 10px 5px 0 0;
 }
 

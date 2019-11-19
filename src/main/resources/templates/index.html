@@ -1,58 +1,46 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="style.css"/>
-    <link rel="stylesheet" type="text/css" href="style_map.css"/>
-    <title>Travel Info</title>
 </head>
 <body>
-
-<div id="map"></div>
-
-<div id="controlPlaces" class="controlPlaces">
-    <button id="btnAddPlace" class="btnAddPlace btn btn-light" type="button">ADD NEW</button>
-    <button id="btnSendDataOfPlaces" class="btnAddPlace btn btn-light" type="button">SAVE TRIP</button>
-</div>
-
-<div id="controlMarkers">
-    <div class="btn-group">
-        <div class="button"><a href="#">
-            <div id="place" class="img place btn btn-primary"></div>
-        </a></div>
-        <div class="button"><a href="#">
-            <div id="food" class="img food btn btn-primary"></div>
-        </a></div>
-        <div class="button"><a href="#">
-            <div id="sleep" class="img sleep btn btn-primary"></div>
-        </a></div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Logo</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/map">Add new place</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Pricing</a>
+            </li>
+        </ul>
     </div>
-    <div class="addressContainer"><p id="address" class="address"></p></div>
-    <div class="btn-group">
-        <div id="btnChooseFile" class="img addImage btn btn-primary">
-            <input id="chooseFile" type="file" />
-        </div>
-        <div id="icon" class="img picture"></div>
-        <div class="img picture"></div>
+    <div class="navbar-text mr-3"><span th:text="${userName}"></span></div>
+    <div class="navbar-text mr-3" th:style="'display:' + ${display} + ';'"><form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form></div>
+</nav>
+<tr th:each="place: ${places}">
+    <div>
+        <td th:text="${place.id}"/>
+        <td th:text="${place.latitude}"/>
+        <td th:text="${place.longitude}"/>
+        <td th:text="${place.address}"/>
+        <td th:text="${place.authorName}"/>
     </div>
-    <div class="btn-group">
-        <div class="img picture"></div>
-        <div class="img picture"></div>
-        <div class="img picture"></div>
-    </div>
-    <button id="btnAdd" class="btnAdd btn btn-light" type="button">ADD</button>
-</div>
-<!-- Init Map -->
-<script src="map.js"></script>
-<!-- Google Map Key -->
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgl7nxlZ_FNI9Mrw0iw0Mpgi7cFhExhU4&callback=initMap">
-</script>
-<!-- BootsTrap -->
+</tr>
+
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>

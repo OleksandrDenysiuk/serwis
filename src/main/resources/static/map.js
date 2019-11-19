@@ -1,11 +1,9 @@
 var geocoder;
-var placesJson = [];
-var id = 0;
+var placeJson;
 var currentLatLng;
 var markers = [];
 var map;
 var icon;
-
 function initMap() {
     var icon_food = {
         url: 'img/food.png', // url
@@ -31,8 +29,7 @@ function initMap() {
     });
 
     var marker = new google.maps.Marker({
-        map: map,
-        title: 'test'
+        map: map
     });
 
     var addressContener = document.getElementById("address");
@@ -41,22 +38,13 @@ function initMap() {
         placeMarkerAndPanTo(e.latLng, map, icon, marker);
         addAddress(function (address) {
             addressContener.innerHTML = address;
+            pushJson(e.latLng, address);
         }, e.latLng);
         currentLatLng = e.latLng;
+
     });
 
-    var controlPlaces = document.getElementById("controlPlaces");
     var controlMarkers = document.getElementById("controlMarkers");
-
-    var btnSendDataOfPlaces = document.getElementById("btnSendDataOfPlaces");
-    btnSendDataOfPlaces.addEventListener('click', event => {
-        sendData();
-    });
-
-    var btnAddPlace = document.getElementById("btnAddPlace")
-        .addEventListener('click', event => {
-            controlMarkers.style.display = "inline";
-        });
 
     var imgContener1 = document.getElementById("place");
     var imgContener2 = document.getElementById("food");
@@ -84,24 +72,6 @@ function initMap() {
 
     var btnAdd = document.getElementById("btnAdd").addEventListener('click', event => {
 
-        var placeContenerP = document.createElement('P');
-        placeContenerP.className = "address";
-
-        addAddress(function (address) {
-            placeContenerP.innerHTML = address;
-            pushJson(currentLatLng, address);
-        }, currentLatLng);
-
-        var placeContenerDiv = document.createElement('DIV');
-        placeContenerDiv.className = "addressContainer";
-
-        placeContenerDiv.appendChild(placeContenerP);
-        controlPlaces.appendChild(placeContenerDiv);
-
-        controlMarkers.style.display = "none";
-        btnSendDataOfPlaces.style.display = "inline";
-        controlPlaces.appendChild(btnSendDataOfPlaces);
-
         markers.push({coords: currentLatLng, iconImage: icon});
         console.log(markers);
 
@@ -109,28 +79,14 @@ function initMap() {
             // Add markers
             addMarker(markers[i]);
         }
+        sendOnePLaceData();
+        document.getElementById("form").submit();
     });
 
-    const realFileBtn = document.getElementById("chooseFile");
-    const customBtn = document.getElementById("btnChooseFile");
-
-    customBtn.addEventListener("click", function () {
-        realFileBtn.click();
-    });
-
-    realFileBtn.addEventListener("change", function () {
-        console.log(realFileBtn.value);
-        var imageContainer = document.getElementById("icon");
-        imageContainer.style.background = "none";
-        var image = document.createElement("img");
-        image.className = "img";
-        image.src = realFileBtn.value;
-        imageContainer.appendChild(image);
-    });
-
+    document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
     map.controls[google.maps.ControlPosition.LEFT_TOP].push(controlMarkers);
-    map.controls[google.maps.ControlPosition.RIGHT_TOP].push(controlPlaces);
+
 }
 
 function placeMarkerAndPanTo(latLng, map, icon, marker) {
@@ -139,12 +95,12 @@ function placeMarkerAndPanTo(latLng, map, icon, marker) {
     map.panTo(latLng);
 }
 
-function sendData() {
+function sendOnePLaceData() {
     var xhr = new XMLHttpRequest();
-    var url = "http://localhost:8080/";
-    xhr.open("POST", url, true);
+    var url = "http://localhost:8080/place";
+    xhr.open("POST", url, false);
     xhr.setRequestHeader("Content-Type", "application/json");
-    var data = JSON.stringify(placesJson);
+    var data = JSON.stringify(placeJson);
     xhr.send(data);
 }
 
@@ -161,13 +117,11 @@ function addAddress(callback, latLng) {
 }
 
 function pushJson(latLng, address) {
-    placesJson.push(
-        {
-            id: id++,
-            lat: latLng.lat(),
-            lng: latLng.lng(),
-            address: address
-        });
+    placeJson = {
+        latitude: latLng.lat().toString(),
+        longitude: latLng.lng().toString(),
+        address: address
+    }
 }
 
 function addMarker(props) {
@@ -177,3 +131,38 @@ function addMarker(props) {
         icon: props.iconImage
     });
 }
+
+function handleFileSelect(evt) {
+    console.log(document.getElementById("files").files[0]);
+    var files = evt.target.files; // FileList object
+
+    // Loop through the FileList and render image files as thumbnails.
+    for (var i = 0, f; f = files[i]; i++) {
+
+        // Only process image files.
+        if (!f.type.match('image.*')) {
+            continue;
+        }
+
+        var reader = new FileReader();
+
+        // Closure to capture the file information.
+        reader.onload = (function(theFile) {
+            return function(e) {
+                // Render thumbnail.
+                var span = document.createElement('span');
+                span.innerHTML = ['<img class="thumb" src="', e.target.result,
+                    '" title="', escape(theFile.name), '"/>'].join('');
+                document.getElementById('list').insertBefore(span, null);
+
+            };
+        })(f);
+
+        // Read in the image file as a data URL.
+        reader.readAsDataURL(f);
+    }
+
+}
+
+
+
