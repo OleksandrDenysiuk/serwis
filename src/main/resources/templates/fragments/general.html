@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>general</title>
+</head>
+<body>
+<header class="navContainer" th:fragment="header">
+    <nav class="navbar navbar-expand-lg firstNav">
+        <a class="navbar-brand" href="/">System turystyczny</a>
+        <div class="collapse navbar-collapse">
+        </div>
+        <div class="imgUser"></div>
+        <a class="btn btn-info" th:href="@{/login}" th:fragment="bar">Get started</a>
+        <div class="nav-item dropdown" th:fragment="barUser(userName)">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+               aria-expanded="false">
+                <span th:text="${userName}"></span>
+            </a>
+            <a class="btn btn-info navbar-btn" href="/map">+ Create place</a>
+            <a class="btn btn-info navbar-btn" href="/trip" data-toggle="modal" data-target="#CreatTripModal">+ Create
+                trip</a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="/">Home</a>
+                <a class="dropdown-item" href="/map">Add new place</a>
+                <a class="dropdown-item" href="/places/my">My places</a>
+                <a class="dropdown-item" href="/profile">Profile</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" th:href="@{/logout}">Log out</a>
+            </div>
+        </div>
+    </nav>
+</header>
+</body>
+</html>

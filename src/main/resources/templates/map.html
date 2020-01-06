@@ -6,29 +6,52 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="style.css"/>
-    <link rel="stylesheet" type="text/css" href="style_map.css"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style_map.css}"/>
     <title>Travel Info</title>
 </head>
 <body>
 
 <div id="map"></div>
 
-<div id="controlMarkers">
+<div id="controlMarkers" class="overflow-auto">
     <div class="btn-group">
-        <div id="place" class="img place btn btn-primary"></div>
-        <div id="food" class="img food btn btn-primary"></div>
-        <div id="sleep" class="img sleep btn btn-primary"></div>
+        <div id="place" class="type-icon place"></div>
+        <div id="food" class="type-icon food"></div>
+        <div id="sleep" class="type-icon sleep"></div>
     </div>
-    <div class="addressContainer"><p id="address" class="address"></p></div>
-    <form id="form" method="post" enctype="multipart/form-data">
-        <div><input type="file" id="files" name="img" multiple></div>
-        <output id="list"></output>
+    <div class="addressContainer"><p id="addressContainer" class="address"></p></div>
+    <form id="form" method="post" enctype="multipart/form-data" onsubmit="return false;">
+        <input type="hidden" id="type" name="type" th:value="${type}">
+        <input type="hidden" id="latitude" name="latitude" th:value="${latitude}">
+        <input type="hidden" id="longitude" name="longitude" th:value="${longitude}">
+        <input type="hidden" id="address" name="address" th:value="${address}">
+        <input type="hidden" id="tags" name="tags">
+        <div>
+            <label class="btn btn-outline-info" for="files">Choose images</label>
+            <input type="file" id="files" name="img" style="display:none;" multiple onchange="zalupa()">
+        </div>
+        <div class="group-desc-tags h6">
+            <label for="exampleFormControlTextarea1">Description</label>
+            <textarea  class="form-control" id="exampleFormControlTextarea1" rows="5" name="description"
+                      th:text="${description}" maxlength="255"></textarea>
+            <p th:text="${descriptionError}?${descriptionError}:'nie'"></p>
+            <label for="inputTags">Tags</label>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend" id="button-addon3">
+                </div>
+                <input type="text" class="form-control" placeholder="#example"
+                       aria-describedby="button-addon3" id="inputTags" th:value="${tags}">
+            </div>
+        </div>
     </form>
-    <button id="btnAdd">Добавить</button>
+    <div class="mb-5">
+        <button id="btnAdd" class="btn btn-outline-info mr-5">Create place</button>
+        <a class="btn btn-outline-danger ml-5" href="javascript:history.back()">Cancel</a>
+    </div>
 </div>
 <!-- Init Map -->
-<script src="map.js"></script>
+<script th:src="@{/js/map.js}"></script>
 <!-- Google Map Key -->
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgl7nxlZ_FNI9Mrw0iw0Mpgi7cFhExhU4&callback=initMap">

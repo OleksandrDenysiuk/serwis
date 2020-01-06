@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://kit.fontawesome.com/facc149abe.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style_navbar.css}"/>
+</head>
+<body class="text-center">
+<header class="navContainer">
+    <nav class="navbar navbar-expand-lg firstNav">
+        <a class="navbar-brand" href="/">System turystyczny</a>
+        <div class="collapse navbar-collapse">
+        </div>
+        <div class="imgUser"></div>
+        <a class="btn btn-info" th:href="@{/login}" th:if="${user == null}">Get started</a>
+        <div class="nav-item dropdown" th:if="${user.getUsername()}">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+               aria-expanded="false">
+                <span th:text="${user.getUsername()}"></span>
+            </a>
+            <a class="btn btn-info navbar-btn" href="/map">+ Create place</a>
+            <a class="btn btn-info navbar-btn" href="/trip" data-toggle="modal" data-target="#CreatTripModal">+ Create
+                trip</a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="/">Home</a>
+                <a class="dropdown-item" href="/map">Add new place</a>
+                <a class="dropdown-item" href="/places/my">My places</a>
+                <a class="dropdown-item" href="/profile">Profile</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" th:href="@{/logout}">Log out</a>
+            </div>
+        </div>
+    </nav>
+</header>
+<nav class="navbar navbar-expand-lg secondNav">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <div class="nav-link" id="profile-link">Profile</div>
+            </li>
+            <li class="nav-item">
+                <div class="nav-link" id="messages-link">Messages</div>
+            </li>
+            <li th:if="${user != null}" class="nav-item">
+                <div th:if="${user.isAdmin()}" class="nav-link" id="users-link">Users</div>
+            </li>
+            <li th:if="${user != null}" class="nav-item">
+                <div th:if="${user.isAdmin()}" class="nav-link" id="places-link">Places</div>
+            </li>
+            <li th:if="${user != null}" class="nav-item">
+                <div th:if="${user.isAdmin()}" class="nav-link" id="bans-link">Bans</div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="content content-profile" id="profile-content">
+    <form method="post" class="form-profile-data">
+        <label class="col-form-label">Nickname:</label>
+        <input type="text" name="username" class="form-control" th:value="${user.getUsername()}" required>
+
+        <label class="col-form-label">Name:</label>
+        <input type="text" name="name" class="form-control" th:value="${user.getName()}">
+
+        <label class="col-form-label">Surname:</label>
+        <input type="text" name="surname" class="form-control" th:value="${user.getSurname()}">
+
+        <label class="col-form-label">New password:</label>
+        <input type="password" name="password" class="form-control" placeholder="New password">
+
+        <label class="col-form-label">Email:</label>
+        <input type="email" name="email" class="form-control" th:value="${user.getEmail()}">
+
+        <button class="btn btn-primary" type="submit">Save</button>
+    </form>
+</div>
+
+<div class="content content-profile" id="messages-content" style="display: none">
+    <div class="" th:each="message : ${user.getMessages()}">
+        <div class="alert alert-secondary" role="alert">
+            <span th:text="${message}"></span>
+        </div>
+    </div>
+</div>
+
+<div th:if="${user != null && user.isAdmin()}" class="content" id="users-content">
+    <table class="table">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">#id</th>
+            <th scope="col">active</th>
+            <th scope="col">locked</th>
+            <th scope="col">email</th>
+            <th scope="col">user name</th>
+            <th scope="col">name</th>
+            <th scope="col">surname</th>
+            <th scope="col">message</th>
+            <th scope="col">ban</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}" th:if="${!user.isAdmin()}" th:classappend="${user.isLocked()} ? 'alert-danger' : ''">
+            <th th:text="${user.getId()}"></th>
+            <td th:text="${user.isActive()}"></td>
+            <td th:text="${user.isLocked()}"></td>
+            <td th:text="${user.getEmail()}"></td>
+            <td th:text="${user.getUsername()}"></td>
+            <td th:text="${user.getName()}"></td>
+            <td th:text="${user.getSurname()}"></td>
+            <td>
+                <button data-toggle="modal" th:data-whatever="${user.getId()}" data-target="#NewMessageForm"
+                        class="btn btn-primary">Message
+                </button>
+            </td>
+            <td th:if="${user.isLocked()}">
+                <form method="post" th:action="@{'/unlock/' + ${user.getId()}}">
+                    <button type="submit" class="btn btn-danger">Unlock</button>
+                </form>
+            </td>
+            <td th:unless="${user.isLocked()}">
+                <form method="post" th:action="@{'/block/' + ${user.getId()}}">
+                    <button type="submit" class="btn btn-danger">Block</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:if="${user != null && user.isAdmin()}" class="content" id="places-content">
+    <table class="table" style="table-layout: fixed; width: 100%">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col" style="width: 50px;">#id</th>
+            <th scope="col">address</th>
+            <th scope="col" style="width: 310px;">description</th>
+            <th scope="col">latitude/longitude</th>
+            <th scope="col">rating</th>
+            <th scope="col">type</th>
+            <th scope="col">author</th>
+            <th scope="col">delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="place : ${places}">
+            <td th:text="${place.getId()}"></td>
+            <td th:text="${place.getAddress()}"></td>
+            <td th:text="${place.getDescription()}" style="word-wrap: break-word;"></td>
+            <td th:text="${place.getLatitude()} + ' / ' + ${place.getLongitude()}"></td>
+            <td th:text="${place.getRating()}"></td>
+            <td th:text="${place.getType()}"></td>
+            <td th:text="${place.getAuthor().getUsername()}"></td>
+            <td>
+                <form method="post" th:action="@{'/delete/' + ${place.getId()}}">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:if="${user != null && user.isAdmin()}" class="content" id="bans-content">
+    <div th:each="ban : ${bans}">
+        <div class="alert alert-secondary" role="alert">
+            <span th:text="${ban.getId()}"></span>
+            <span th:text="${ban.getType()}"></span>
+            <span th:text="'Author of ban: ' + ${ban.getAuthor().getUsername()}"></span>
+            <a th:href="@{'/place/' + ${ban.getPlace().getId()} + '/view'}">See place</a>
+            <div class="ban-batns">
+                <a class="btn ban-btn btn-primary" th:href="'ban/accept/' + ${ban.getId()}">Accept</a>
+                <a class="btn btn-danger" th:href="'ban/reject/' + ${ban.getId()}">Reject</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="NewMessageForm" tabindex="-1" role="dialog"
+     aria-labelledby="ModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">New trip</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post">
+                <div class="form-group">
+                    <label for="messageForUser">Message for user</label>
+                    <input type="text" class="form-control" id="messageForUser" name="message">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Send message</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/index.js}"></script>
+<script th:src="@{/js/profile.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>

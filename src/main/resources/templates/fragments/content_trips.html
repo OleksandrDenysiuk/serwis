@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="content(user,trips)" class="content">
+    <div class="filter col">
+        <div class="divFilers">Filters</div>
+        <form action="/filter/trips" method="get">
+            <div class="form-group">
+                <label for="inputAuthor" class="col-form-label">Author</label>
+                <input name="author" id="inputAuthor" type="text" class="form-control" placeholder="Search">
+            </div>
+            <div class="form-group">
+                <p>
+                    <label for="amount" class="col-form-label" >Amount places range:</label>
+                    <input name="amount" class="form-control" type="text" id="amount" readonly style="border:0;">
+                </p>
+                <div id="slider-range"></div>
+            </div>
+            <div th:if="${user != null}">
+                <label class="col-form-label">Author</label>
+                <div class="form-check">
+                    <input name="owner" class="form-check-input" type="radio" value="myPlaces" id="my">
+                    <label class="form-check-label" for="my">
+                        Only my
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input name="owner" class="form-check-input" type="radio" value="notMyPLaces" id="notMy">
+                    <label class="form-check-label" for="notMy">
+                        Without my
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input name="owner" class="form-check-input" type="radio" value="allPlaces" id="all" checked>
+                    <label class="form-check-label" for="all">
+                        All places
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+    <div class="places col">
+        <tr th:each="trip: ${trips}">
+            <div class="card trip-card">
+                <div class="card-body">
+                    <h5 class="card-title"><span th:text="${trip.name}"></span></h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Author: <span
+                            th:text="${trip.author.getUsername()}"></span></h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Amount: <span th:text="${trip.getPlaces().size()}"></span>
+                    </h6>
+                    <a>View Details</a>
+                    <a th:id="'link-places-from-trip' + ${trip.id}">See places</a>
+                    <a th:id="'link-comments-from-trip' + ${trip.id}">See comments</a>
+                </div>
+                <script th:inline="javascript">
+                    var trip[[${trip.id}]] = [[${trip.id}]];
+                    $("#link-places-from-trip" + trip[[${trip.id}]]).click(function () {
+                        $(".group-place-from-trip").each(function () {
+                            $(this).css('display', 'none');
+                        });
+                        $(".group-comments-from-trip").each(function () {
+                            $(this).css('display', 'none');
+                        });
+                        $('#trip_' + trip[[${trip.id}]]).css('display', 'block');
+                    });
+                    $("#link-comments-from-trip" + trip[[${trip.id}]]).click(function () {
+                        $(".group-comments-from-trip").each(function () {
+                            $(this).css('display', 'none');
+                        });
+                        $(".group-place-from-trip").each(function () {
+                            $(this).css('display', 'none');
+                        });
+                        $('#comments_' + trip[[${trip.id}]]).css('display', 'block');
+                    });
+                </script>
+            </div>
+        </tr>
+        <div th:each="trip: ${trips}" class="group-place-from-trip" th:id="'trip_' + ${trip.id}"
+             style="display: none">
+            <div th:each="place : ${trip.getPlaces()}">
+                <div class="placeInfoContainer">
+                    <form>
+                        <div class="stars">
+                            <input type="radio" name="star" class="star-1" id="star-1"
+                                   th:checked="${place.rating == 1} ? true : false"/>
+                            <label class="star-1" for="star-1">1</label>
+                            <input type="radio" name="star" class="star-2" id="star-2"
+                                   th:checked="${place.rating == 2} ? true : false"/>
+                            <label class="star-2" for="star-2">2</label>
+                            <input type="radio" name="star" class="star-3" id="star-3"
+                                   th:checked="${place.rating == 3} ? true : false"/>
+                            <label class="star-3" for="star-3">3</label>
+                            <input type="radio" name="star" class="star-4" id="star-4"
+                                   th:checked="${place.rating == 4} ? true : false"/>
+                            <label class="star-4" for="star-4">4</label>
+                            <input type="radio" name="star" class="star-5" id="star-5"
+                                   th:checked="${place.rating == 5} ? true : false"/>
+                            <label class="star-5" for="star-5">5</label>
+                            <span></span>
+                        </div>
+                    </form>
+                    <div class="images"><img class="displayed" th:src="@{'/images/' + ${place.getOneFile()}}"/></div>
+                    <div class="info">
+                        <div class="user-info-container">
+                            <div class="imgUser inPlace user-group"></div>
+                            <div class="user-group user-name"><span th:text="${place.authorName}"></span></div>
+                        </div>
+                        <div class="btn-group">
+                            <div id="place" class="type-icon place"></div>
+                            <div class="place-address"><span class="address" th:text="${place.address}"></span></div>
+                        </div>
+                        <div>
+                            <a th:href="@{'https://www.google.pl/maps/place/' + ${place.latitude} + ' ' + ${place.longitude}}"
+                               target="_blank">View
+                                on Google map</a></div>
+                        <label for="description">Description:</label>
+                        <div id="description"><span th:text="${place.description}"></span></div>
+                    </div>
+                    <div th:if="${userName != null}">
+                        <div class="btnInfo" th:if="${place.isSubscriber(user)}">
+                            <p>Subscribed</p>
+                        </div>
+                        <div class="btnInfo" th:unless="${userName != place.authorName}">
+                            <p>Author</p>
+                        </div>
+                        <div class="btnAdd" th:unless="${place.isSubscriber(user)}">
+                            <a th:href="@{'/places/' + ${place.id}}">Add place</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:each="trip: ${trips}" class="group-comments-from-trip" th:id="'comments_' + ${trip.id}"
+             style="display: none">
+            <form th:if="${user != null}" method="post" class="inputComment"
+                  th:action="'/trip/' + ${trip.getId()} + '/commit'">
+                <label for="comment">Write to new comment</label>
+                <textarea class="form-control" id="comment" rows="5" name="newComment"
+                          maxlength="25"></textarea>
+                <button type="submit" class="btn btn-primary">Commit</button>
+            </form>
+            <div class="content-comments" th:each="comments : ${trip.getComments()}">
+                <label class="commentsLabel" for="comments">Comments</label>
+                <div class="comments" id="comments">
+                    <tr th:each="comment : ${comments}">
+                        <div class="comment">
+                            <div class="comment-info">
+                                <div><span th:text="${comment.author.username}"></span></div>
+                                <div id="comment-content"><span th:text="${comment.content}"></span></div>
+                            </div>
+                            <div class="comment-edit" onclick="show()">EDIT</div>
+                            <div class="comment-delete"><a
+                                    th:href="@{'/' + ${comment.id} + '/delete'}">DELETE</a>
+                            </div>
+                            <form id="form-edit-comment"
+                                  th:action="@{'/' + ${comment.id} + '/edit'}"
+                                  method="post">
+                <textarea class="form-control" id="commentEdit" rows="5" name="editComment"
+                          th:text="${comment.content}" maxlength="25"></textarea>
+                                <button type="submit" class="btn btn-primary">Send</button>
+                            </form>
+                        </div>
+                    </tr>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,132 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#controlMarkers{
+    border-radius: 8px;
+    height: 770px;
+    width: 400px;
+    background-color: white;
+    margin-top: 7px;
+    margin-left: 7px;
+    text-align: center;
+    border-style: solid;
+    border-color: grey;
+}
+
+.type-icon{
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
+    margin: 10px;
+}
+
+.type-icon:hover{
+    box-shadow: 0 2px 6px 0 #e0e4e7, inset -1px 0 0 0 rgba(224,227,231,.3), inset 0 -1px 0 0 #e0e4e7, inset 1px 0 0 0 rgba(224,227,231,.2);
+}
+
+.food{
+    background: url('https://firebasestorage.googleapis.com/v0/b/travelinfo-1cc54.appspot.com/o/bar.png?alt=media&token=1a2506f3-7e66-4fdb-b282-9c3eb1c1eff1') no-repeat center/cover;
+}
+.place{
+    background: url('https://firebasestorage.googleapis.com/v0/b/travelinfo-1cc54.appspot.com/o/building.png?alt=media&token=b33b0163-8293-4492-be83-d0120c4f49f9') no-repeat center/cover;
+}
+.sleep{
+    background: url('https://firebasestorage.googleapis.com/v0/b/travelinfo-1cc54.appspot.com/o/hotel.png?alt=media&token=53a39efd-ec02-445d-8c8f-f2c16cc21d52') no-repeat center/cover;
+}
+
+.button{
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+}
+
+#controlPlaces{
+    border-radius: 8px;
+    height: 500px;
+    width: 400px;
+    background-color: white;
+    margin-top: 7px;
+    margin-right: 7px;
+    text-align: center;
+    border-style: solid;
+    border-color: grey;
+}
+
+.btnAddPlace{
+    height: 50px;
+    width: 300px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border-style: solid;
+    border-color: grey;
+}
+
+.btnAdd{
+    height: 50px;
+    width: 300px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border-style: solid;
+    border-color: grey;
+}
+
+.addressContainer{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.address{
+    margin: 0;
+}
+
+#btnSendDataOfPlaces{
+    display: none;
+}
+
+#chooseFile{
+    display: none;
+}
+
+#test{
+    width: 100px;
+    height: 100px;
+}
+
+.block {
+    height: 100px;
+    overflow: hidden;
+    position: relative;
+    width: 100px;
+    border: #bfbfbf solid 1px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px 0 #e0e4e7,
+    inset -1px 0 0 0 rgba(224, 227, 231, .3),
+    inset 0 -1px 0 0 #e0e4e7,
+    inset 1px 0 0 0 rgba(224, 227, 231, .2);
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+.block img {
+    height: 100px;
+    margin: auto;
+}
+
+.group-desc-tags{
+    text-align: left;
+    padding: 20px;
+    margin: 0;
+}
+
+.group-desc-tags textarea{
+    resize: none;
+}
+
+.group-desc-tags label{
+    margin-top: 10px;
+}
+

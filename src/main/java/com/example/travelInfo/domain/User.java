@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -13,14 +14,44 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     private String username;
+    private String name;
+    private String surname;
+    private String email;
     private String password;
     private boolean active;
+    private boolean locked;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
+
+    @ManyToMany(
+            fetch = FetchType.EAGER
+    )
+    @JoinTable(
+            name = "subscribers_places",
+            joinColumns = { @JoinColumn(name = "subscriber_id") },
+            inverseJoinColumns = { @JoinColumn(name = "place_id") }
+    )
+    Set<Place> places = new HashSet<>();
+
+    @ManyToMany(
+            fetch = FetchType.EAGER
+    )
+    @JoinTable(
+            name = "rated_users",
+            joinColumns = { @JoinColumn(name = "rated_user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "place_id") }
+    )
+    private Set<Place> ratedPlaces = new HashSet<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "messages", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "message")
+    private Set<String> messages = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -41,7 +72,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !isLocked();
     }
 
     @Override
@@ -85,5 +116,90 @@ public class User implements UserDetails {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Set<Place> getPlaces() {
+        return places;
+    }
+
+    public void setPlaces(Set<Place> places) {
+        this.places = places;
+    }
+
+    public Set<Place> getRatedPlaces() {
+        return ratedPlaces;
+    }
+
+    public void setRatedPlaces(Set<Place> ratedPlaces) {
+        this.ratedPlaces = ratedPlaces;
+    }
+
+    public Set<String> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Set<String> messages) {
+        this.messages = messages;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    public boolean isAdmin(){
+        for (Role role : this.getRoles()){
+            if(role.equals(Role.ADMIN)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        return id.intValue() * 31;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        if (id != other.id)
+            return false;
+        return true;
     }
 }

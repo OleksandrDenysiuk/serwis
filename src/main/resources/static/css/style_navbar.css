@@ -1,0 +1,15 @@
+.nav-link{
+    display: inline;
+    color: black;
+    padding-right: 10px !important;
+}
+
+.navbar-btn{
+    display: inline;
+    background-color: rgba(0,233,239,0.59);
+}
+
+.navbar-btn:hover{
+    background-color: rgba(1,207,241,0.46);
+    border: 1px solid rgba(0,233,239,0.59);
+}

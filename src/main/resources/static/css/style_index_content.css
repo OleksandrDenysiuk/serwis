@@ -1,0 +1,100 @@
+.images {
+    width: 220px;
+    display: inline-block;
+    background-size: cover;
+    margin: 10px;
+}
+
+.images img {
+    -o-object-fit: cover;
+    object-fit: cover;
+    width: 220px;
+    height: 220px;
+}
+
+.form-group{
+    margin: 20px;
+}
+
+.stars{
+    position: absolute;
+    right: 0;
+    margin-right: 31px;
+    margin-top: 12px;
+}
+
+.food{
+    background: url('https://firebasestorage.googleapis.com/v0/b/travelinfo-1cc54.appspot.com/o/bar.png?alt=media&token=1a2506f3-7e66-4fdb-b282-9c3eb1c1eff1') no-repeat center/cover;
+}
+.place{
+    background: url('https://firebasestorage.googleapis.com/v0/b/travelinfo-1cc54.appspot.com/o/building.png?alt=media&token=b33b0163-8293-4492-be83-d0120c4f49f9') no-repeat center/cover;
+}
+.sleep{
+    background: url('https://firebasestorage.googleapis.com/v0/b/travelinfo-1cc54.appspot.com/o/hotel.png?alt=media&token=53a39efd-ec02-445d-8c8f-f2c16cc21d52') no-repeat center/cover;
+}
+
+.type-icon{
+    width: 39px;
+    height: 39px;
+    display: inline-block;
+}
+
+.place-address{
+    display: inline-block;
+}
+
+.address{
+    line-height: 2.3;
+}
+
+.inPlace{
+    width: 39px;
+    height: 39px;
+}
+
+.user-group{
+    display: inline-flex;
+}
+
+.user-info-container{
+    display: flex;
+    align-items: center;
+}
+
+.user-name{
+    padding: 10px;
+}
+
+#description{
+    box-sizing: border-box;
+    width: 510px;
+    height: 100px;
+}
+
+label{
+    margin: 0;
+}
+
+.trip-card{
+    display: inline-block;
+    width: 14em;
+}
+
+#placesFromTrip{
+    display: none;
+}
+
+.tags{
+    padding-top: 3px;
+    padding-bottom: 5px;
+}
+
+.tag{
+    display: inline-flex;
+}
+
+.btns-center{
+    text-align: center;
+    padding-top: 15px;
+    padding-bottom: 5px;
+}
