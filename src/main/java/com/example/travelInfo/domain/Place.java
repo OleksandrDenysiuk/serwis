@@ -1,6 +1,8 @@
 package com.example.travelInfo.domain;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -10,12 +12,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+@Getter
+@Setter
 @Entity
-public class Place {
-
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private Long id;
+public class Place extends BaseEntity{
 
     @NotBlank(message = "Please choose some type of place")
     private String type;
@@ -81,135 +81,11 @@ public class Place {
     }
 
     public Place(Long id, String latitude, String longitude, String address, User user) {
-        this.id = id;
+        super(id);
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
         this.author = user;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(User author) {
-        this.author = author;
-    }
-
-    public String getAuthorName(){
-        return author != null ? author.getUsername() : "user null";
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
-    public Set<String> getTags() {
-        return tags;
-    }
-
-    public void setTag(String tag) {
-        this.tags.add(tag);
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Set<String> getFiles() {
-        return files;
-    }
-
-    public void setFile(String file) {
-        this.files.add(file);
-    }
-
-    public void setFiles(Set<String> files) {
-        this.files = files;
-    }
-
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
-    }
-
-    public Set<Trip> getTrips() {
-        return trips;
-    }
-
-    public void setTrips(Set<Trip> trips) {
-        this.trips = trips;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    public Set<User> getRatedUsers() {
-        return ratedUsers;
-    }
-
-    public void setRatedUsers(Set<User> ratedUsers) {
-        this.ratedUsers = ratedUsers;
-    }
-
-    public Timestamp getDate() {
-        return date;
-    }
-
-    public void setDate(Timestamp date) {
-        this.date = date;
     }
 
     public String getOneFile(){
@@ -228,11 +104,8 @@ public class Place {
 
 
     public void removeUser(User user) {
-        System.out.println(this.users.size());
         this.users.remove(user);
         user.getPlaces().remove(this);
-        System.out.println(users.size());
-        System.out.println(user.getPlaces().size());
     }
 
     public boolean isSubscriber(User subscriber){
@@ -255,25 +128,5 @@ public class Place {
 
     public boolean isAuthor(User user){
         return getAuthor().equals(user);
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        return id.intValue() * 31;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Place other = (Place) obj;
-        if (id != other.id)
-            return false;
-        return true;
     }
 }
