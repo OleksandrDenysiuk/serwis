@@ -1,7 +1,9 @@
 package com.example.travelInfo.domain;
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,8 +13,25 @@ public class Trip {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotBlank(message = "Please fill the name of trip")
+    @NotNull(message = "Bed data od trip, try second time")
+    @Length(max = 25, message = "Name too long (more than 25)")
     private String name;
+
+    @NotNull(message = "Bed data od trip, try second time")
+    @Length(max = 255, message = "Description too long (more than 255)")
+    private String description;
+
+    private int rating = 0;
+
+    @ManyToMany(
+            fetch = FetchType.EAGER
+    )
+    @JoinTable(
+            name = "rated_trip_user",
+            joinColumns = { @JoinColumn(name = "trip_id") },
+            inverseJoinColumns = { @JoinColumn(name = "rated_user_id") }
+    )
+    private Set<User> ratedUsers = new HashSet<>();
 
     @ManyToOne(
             fetch = FetchType.EAGER)
@@ -23,7 +42,7 @@ public class Trip {
             cascade=CascadeType.REMOVE,
             fetch=FetchType.EAGER)
     @JoinTable(
-            name = "Trip_Place",
+            name = "trip_place",
             joinColumns = { @JoinColumn(name = "trip_id") },
             inverseJoinColumns = { @JoinColumn(name = "place_id") }
     )
@@ -94,6 +113,30 @@ public class Trip {
         this.comments = comments;
     }
 
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public Set<User> getRatedUsers() {
+        return ratedUsers;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setRatedUsers(Set<User> ratedUsers) {
+        this.ratedUsers = ratedUsers;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -112,5 +155,17 @@ public class Trip {
         if (id != other.id)
             return false;
         return true;
+    }
+    public boolean isRater(User rater){
+        for(User user : this.getRatedUsers()){
+            if(user.equals(rater)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isAuthor(User user){
+        return getAuthor().equals(user);
     }
 }

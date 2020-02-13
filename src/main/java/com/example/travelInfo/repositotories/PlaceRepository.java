@@ -15,6 +15,12 @@ public interface PlaceRepository extends CrudRepository<Place, Long>{
 
     List<Place> findAllByOrderByDateDesc();
 
+    List<Place> findAllByOrderByDateAsc();
+
+    List<Place> findAllByOrderByRatingAsc();
+
+    List<Place> findAllByOrderByRatingDesc();
+
     List<Place> findAllByAddress(String address);
 
     List<Place> findAllByType(String type);

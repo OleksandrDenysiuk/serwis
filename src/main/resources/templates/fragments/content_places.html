@@ -12,39 +12,46 @@
             <label for="inputLocation" class="col-form-label">Location(country)</label>
             <div class="form-group has-search">
                 <i class="fas fa-map-marker-alt form-control-feedback"></i>
-                <input name="location" id="inputLocation" type="text" class="form-control" placeholder="Search">
+                <input name="location" id="inputLocation" type="text" class="form-control" placeholder="Search"
+                       th:value="${location}">
             </div>
             <div>
                 <label class="col-form-label">Type of place</label>
                 <div class="form-check">
-                    <input name="type" class="form-check-input" type="checkbox" value="food" id="foodCheck">
+                    <input name="type" class="form-check-input" type="checkbox" value="food" id="foodCheck"
+                           th:checked="${food}">
                     <label class="form-check-label" for="foodCheck">Food</label>
                 </div>
                 <div class="form-check">
-                    <input name="type" class="form-check-input" type="checkbox" value="place" id="placeCheck">
+                    <input name="type" class="form-check-input" type="checkbox" value="place" id="placeCheck"
+                           th:checked="${place}">
                     <label class="form-check-label" for="placeCheck">Place</label>
                 </div>
                 <div class="form-check">
-                    <input name="type" class="form-check-input" type="checkbox" value="sleep" id="sleepCheck">
+                    <input name="type" class="form-check-input" type="checkbox" value="sleep" id="sleepCheck"
+                           th:checked="${sleep}">
                     <label class="form-check-label" for="sleepCheck">Sleep</label>
                 </div>
             </div>
             <div th:if="${user != null}">
                 <label class="col-form-label">Author</label>
                 <div class="form-check">
-                    <input name="owner" class="form-check-input" type="radio" value="myPlaces" id="my">
+                    <input name="owner" class="form-check-input" type="radio" value="myPlaces" id="my"
+                           th:checked="${myPlaces}">
                     <label class="form-check-label" for="my">
                         Only my
                     </label>
                 </div>
                 <div class="form-check">
-                    <input name="owner" class="form-check-input" type="radio" value="notMyPLaces" id="notMy">
+                    <input name="owner" class="form-check-input" type="radio" value="notMyPlaces" id="notMy"
+                           th:checked="${notMyPlaces}">
                     <label class="form-check-label" for="notMy">
                         Without my
                     </label>
                 </div>
                 <div class="form-check">
-                    <input name="owner" class="form-check-input" type="radio" value="allPlaces" id="all" checked>
+                    <input name="owner" class="form-check-input" type="radio" value="allPlaces" id="all" checked
+                           th:checked="${allPlaces}">
                     <label class="form-check-label" for="all">
                         All places
                     </label>
@@ -53,74 +60,87 @@
             <div>
                 <label for="inputTags" class="col-form-label">Tags</label>
                 <div class="">
-                    <input name="tags" type="text" class="form-control" id="inputTags">
+                    <input name="tags" type="text" class="form-control" id="inputTags" th:value="${tags}">
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
     </div>
     <div class="places col">
-        <tr th:each="place: ${places}">
-            <div class="placeInfoContainer" th:object="${place}">
-                <form id="ratingsForm">
-                    <div class="stars">
-                        <input type="radio" name="star" class="star-1" id="star-1"
-                               th:checked="*{rating == 1} ? true : false"/>
-                        <label class="star-1" for="star-1">1</label>
-                        <input type="radio" name="star" class="star-2" id="star-2"
-                               th:checked="${place.rating == 2} ? true : false"/>
-                        <label class="star-2" for="star-2">2</label>
-                        <input type="radio" name="star" class="star-3" id="star-3"
-                               th:checked="${place.rating == 3} ? true : false"/>
-                        <label class="star-3" for="star-3">3</label>
-                        <input type="radio" name="star" class="star-4" id="star-4"
-                               th:checked="${place.rating == 4} ? true : false"/>
-                        <label class="star-4" for="star-4">4</label>
-                        <input type="radio" name="star" class="star-5" id="star-5"
-                               th:checked="${place.rating == 5} ? true : false"/>
-                        <label class="star-5" for="star-5">5</label>
-                        <span></span>
+        <div class="form-group filter-sort pull-right">
+            <form id="form-sort" method="get" action="/">
+            <label for="select-sort">Sort by</label>
+            <select class="form-control" id="select-sort" name="sort">
+                <option value="dataDesc" th:selected="${dataDesc}">date Descending</option>
+                <option value="dataAsc" th:selected="${dataAsc}">date Ascending</option>
+                <option value="ratingAsc" th:selected="${ratingAsc}">rating Ascending</option>
+                <option value="ratingDesc" th:selected="${ratingDesc}">rating Descending</option>
+            </select>
+            </form>
+        </div>
+        <div>
+            <tr th:each="place: ${places}">
+                <div class="placeInfoContainer" th:object="${place}">
+                    <form id="ratingsForm">
+                        <div class="stars">
+                            <input type="radio" name="star" class="star-1" id="star-1"
+                                   th:checked="*{rating == 1} ? true : false"/>
+                            <label class="star-1" for="star-1">1</label>
+                            <input type="radio" name="star" class="star-2" id="star-2"
+                                   th:checked="${place.rating == 2} ? true : false"/>
+                            <label class="star-2" for="star-2">2</label>
+                            <input type="radio" name="star" class="star-3" id="star-3"
+                                   th:checked="${place.rating == 3} ? true : false"/>
+                            <label class="star-3" for="star-3">3</label>
+                            <input type="radio" name="star" class="star-4" id="star-4"
+                                   th:checked="${place.rating == 4} ? true : false"/>
+                            <label class="star-4" for="star-4">4</label>
+                            <input type="radio" name="star" class="star-5" id="star-5"
+                                   th:checked="${place.rating == 5} ? true : false"/>
+                            <label class="star-5" for="star-5">5</label>
+                            <span></span>
+                        </div>
+                    </form>
+                    <div class="images">
+                        <img class="displayed" th:src="@{'/images/' + ${place.getOneFile()}}"/>
+                        <div th:if="${user != null}">
+                            <div class="btns-center">
+                                <div class="btnInfo" th:if="${place.isSubscriber(user)}">
+                                    <p>Subscribed</p>
+                                </div>
+                                <div class="btnInfo" th:if="${place.isAuthor(user)}">
+                                    <p>Author</p>
+                                </div>
+                                <div class="btnAdd" th:unless="${place.isSubscriber(user)}">
+                                    <a th:href="@{'/places/' + ${place.id}}">Add place</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </form>
-                <div class="images">
-                    <img class="displayed" th:src="@{'/images/' + ${place.getOneFile()}}"/>
-                    <div th:if="${user != null}">
-                        <div class="btns-center">
-                            <div class="btnInfo" th:if="${place.isSubscriber(user)}">
-                                <p>Subscribed</p>
-                            </div>
-                            <div class="btnInfo" th:unless="${userName != place.authorName}">
-                                <p>Author</p>
-                            </div>
-                            <div class="btnAdd" th:unless="${place.isSubscriber(user)}">
-                                <a th:href="@{'/places/' + ${place.id}}">Add place</a>
+                    <div class="info">
+                        <div class="user-info-container">
+                            <div class="imgUser inPlace user-group"></div>
+                            <div class="user-group user-name"><span th:text="${place.authorName}"></span></div>
+                        </div>
+                        <div class="btn-group">
+                            <div id="place" class="type-icon" th:classappend="${place.type}"></div>
+                            <div class="place-address"><span class="address" th:text="${place.address}"></span></div>
+                        </div>
+                        <div>
+                            <a th:href="@{'https://www.google.pl/maps/place/' + ${place.latitude} + ' ' + ${place.longitude}}"
+                               target="_blank">View on
+                                Google map</a></div>
+                        <label for="description">Description:</label>
+                        <div id="description"><span th:text="${place.description}"></span></div>
+                        <div class="tags">
+                            <div class="tag" th:each="tag : ${place.getTags()}">
+                                <h5><span class="badge badge-secondary" th:text="${tag}"></span></h5>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="info">
-                    <div class="user-info-container">
-                        <div class="imgUser inPlace user-group"></div>
-                        <div class="user-group user-name"><span th:text="${place.authorName}"></span></div>
-                    </div>
-                    <div class="btn-group">
-                        <div id="place" class="type-icon" th:classappend="${place.type}"></div>
-                        <div class="place-address"><span class="address" th:text="${place.address}"></span></div>
-                    </div>
-                    <div>
-                        <a th:href="@{'https://www.google.pl/maps/place/' + ${place.latitude} + ' ' + ${place.longitude}}"
-                           target="_blank">View on
-                            Google map</a></div>
-                    <label for="description">Description:</label>
-                    <div id="description"><span th:text="${place.description}"></span></div>
-                    <div class="tags">
-                        <div class="tag" th:each="tag : ${place.getTags()}">
-                            <h5><span class="badge badge-secondary" th:text="${tag}"></span></h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </tr>
+            </tr>
+        </div>
     </div>
 </div>
 </body>

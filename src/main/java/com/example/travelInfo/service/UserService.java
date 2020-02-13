@@ -1,7 +1,6 @@
 package com.example.travelInfo.service;
 
 import com.example.travelInfo.domain.Place;
-import com.example.travelInfo.domain.Role;
 import com.example.travelInfo.domain.User;
 import com.example.travelInfo.repositotories.PlaceRepository;
 import com.example.travelInfo.repositotories.UserRepository;
@@ -14,6 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
+
+import static com.example.travelInfo.domain.Role.ADMIN;
+import static com.example.travelInfo.domain.Role.USER;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -41,7 +43,7 @@ public class UserService implements UserDetailsService {
 
         user.setActive(true);
         user.setLocked(false);
-        user.setRoles(Collections.singleton(Role.USER));
+        user.setRoles(Collections.singleton(USER));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;
@@ -93,5 +95,9 @@ public class UserService implements UserDetailsService {
         place.getUsers().remove(user);
         placeRepository.save(place);
         user.getPlaces().remove(place);
+    }
+
+    public User getAdmin(){
+        return userRepository.findByRoles(ADMIN);
     }
 }

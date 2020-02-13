@@ -4,6 +4,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,11 +17,20 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotBlank(message = "Username cannot be empty")
     private String username;
+    @NotBlank(message = "Name cannot be empty")
     private String name;
+    @NotBlank(message = "Surname cannot be empty")
     private String surname;
+    @Email(message = "Email is not correct")
+    @NotBlank(message = "Email cannot be empty")
     private String email;
+    @NotBlank(message = "Password cannot be empty")
     private String password;
+    @Transient
+    private String password2;
+
     private boolean active;
     private boolean locked;
 
@@ -32,7 +43,7 @@ public class User implements UserDetails {
             fetch = FetchType.EAGER
     )
     @JoinTable(
-            name = "subscribers_places",
+            name = "subscriber_place",
             joinColumns = { @JoinColumn(name = "subscriber_id") },
             inverseJoinColumns = { @JoinColumn(name = "place_id") }
     )
@@ -42,16 +53,11 @@ public class User implements UserDetails {
             fetch = FetchType.EAGER
     )
     @JoinTable(
-            name = "rated_users",
+            name = "rated_user",
             joinColumns = { @JoinColumn(name = "rated_user_id") },
             inverseJoinColumns = { @JoinColumn(name = "place_id") }
     )
     private Set<Place> ratedPlaces = new HashSet<>();
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "messages", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "message")
-    private Set<String> messages = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -91,7 +97,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return getRoles();
     }
 
     public String getPassword() {
@@ -158,20 +164,20 @@ public class User implements UserDetails {
         this.ratedPlaces = ratedPlaces;
     }
 
-    public Set<String> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(Set<String> messages) {
-        this.messages = messages;
-    }
-
     public boolean isLocked() {
         return locked;
     }
 
     public void setLocked(boolean locked) {
         this.locked = locked;
+    }
+
+    public String getPassword2() {
+        return password2;
+    }
+
+    public void setPassword2(String password2) {
+        this.password2 = password2;
     }
 
     public boolean isAdmin(){

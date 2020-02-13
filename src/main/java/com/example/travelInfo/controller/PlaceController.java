@@ -1,15 +1,19 @@
 package com.example.travelInfo.controller;
 
-import com.example.travelInfo.domain.*;
-import com.example.travelInfo.repositotories.BanRepo;
+import com.example.travelInfo.domain.Place;
+import com.example.travelInfo.domain.User;
 import com.example.travelInfo.repositotories.CommentRepo;
 import com.example.travelInfo.repositotories.PlaceRepository;
 import com.example.travelInfo.repositotories.TripRepository;
+import com.example.travelInfo.service.PlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/place")
@@ -22,32 +26,13 @@ public class PlaceController {
     PlaceRepository placeRepository;
 
     @Autowired
-    CommentRepo commentRepo;
+    private PlaceService placeService;
 
     @Autowired
-    BanRepo banRepo;
+    CommentRepo commentRepo;
 
-    @GetMapping("{place}/view")
-    public String viewPlace(@PathVariable Place place,
-                            @AuthenticationPrincipal User user,
-                            Model model) {
-        model.addAttribute("user", user);
-        model.addAttribute("place", place);
-        model.addAttribute("trips", tripRepository.findAllByAuthor(user));
-        model.addAttribute("comments", commentRepo.findAllByPlaceOrderByIdDesc(place));
-        return "place";
-    }
 
-    @PostMapping("{place}/commit")
-    public String commit(@PathVariable Place place,
-                         @AuthenticationPrincipal User user,
-                         @RequestParam String newComment) {
-        Comment comment = new Comment(newComment, user, place);
-        commentRepo.save(comment);
-        return "redirect:/place/{place}/view";
-    }
-
-    @GetMapping("/rate/{place}")
+    @GetMapping("/{place}/rate")
     public String rating(@RequestParam String rating,
                          @PathVariable Place place,
                          @AuthenticationPrincipal User user) {
@@ -57,20 +42,31 @@ public class PlaceController {
             int newRate = (currentRate + Integer.valueOf(rating)) / place.getRatedUsers().size();
             place.setRating(newRate);
             placeRepository.save(place);
-        } else {
-            System.out.println("rater");
+            return "redirect:/adventure/place/{place}/details";
         }
-        return "redirect:/place/{place}/view";
+        return "redirect:/adventure/place/{place}/details?error=You have already rated this place!";
     }
 
-    @PostMapping("{place}/ban")
-    public String ban(@PathVariable Place place,
-                      @AuthenticationPrincipal User user,
-                      @RequestParam(value = "typeOfBan") String typeOfBan,
-                      @RequestParam String commentForBan) {
-        Ban ban = new Ban(typeOfBan, user, place);
-        System.out.printf("true");
-        banRepo.save(ban);
-        return "redirect:/place/{place}/view";
+    @GetMapping("{place}/edit")
+    public String editPlaceForm(@PathVariable Place place,
+                                Model model){
+        model.addAttribute("place",place);
+        model.addAttribute("callBack","initMap");
+        model.addAttribute("leftBar","leftBarEdit");
+        return "map";
+    }
+
+    @PostMapping("{place}/edit")
+    public String editPlace(@PathVariable Place place,
+                            @RequestParam("type") String type,
+                            @RequestParam("latitude") String latitude,
+                            @RequestParam("longitude") String longitude,
+                            @RequestParam("description") String description,
+                            @RequestParam("address") String address,
+                            @RequestParam("img") ArrayList<MultipartFile> files,
+                            @RequestParam("tags") String tags
+    ){
+        placeService.updatePlace(place, type, latitude, longitude, description, address, tags, files);
+        return "redirect:/adventure/place/{place}/details";
     }
 }

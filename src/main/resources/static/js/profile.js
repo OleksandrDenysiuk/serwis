@@ -20,13 +20,6 @@ $("#profile-link").click(function () {
     $("#profile-content").css('display', 'block');
 });
 
-$("#bans-link").click(function () {
-    $(".content").each(function () {
-        $(this).css('display', 'none');
-    });
-    $("#bans-content").css('display', 'block');
-    $("#bans-content").css('text-align', 'left');
-});
 
 $("#users-link").click(function () {
     $(".content").each(function () {

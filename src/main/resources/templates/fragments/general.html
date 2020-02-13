@@ -17,13 +17,12 @@
                aria-expanded="false">
                 <span th:text="${userName}"></span>
             </a>
-            <a class="btn btn-info navbar-btn" href="/map">+ Create place</a>
+            <a class="btn btn-info navbar-btn" href="/createPlace">+ Create place</a>
             <a class="btn btn-info navbar-btn" href="/trip" data-toggle="modal" data-target="#CreatTripModal">+ Create
                 trip</a>
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="/">Home</a>
-                <a class="dropdown-item" href="/map">Add new place</a>
-                <a class="dropdown-item" href="/places/my">My places</a>
+                <a class="dropdown-item" href="/adventure/places">My adventure</a>
                 <a class="dropdown-item" href="/profile">Profile</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" th:href="@{/logout}">Log out</a>

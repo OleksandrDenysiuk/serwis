@@ -4,9 +4,9 @@
     box-sizing: border-box;
 }
 
-#controlMarkers{
+.leftBar{
     border-radius: 8px;
-    height: 770px;
+    height: 680px;
     width: 400px;
     background-color: white;
     margin-top: 7px;

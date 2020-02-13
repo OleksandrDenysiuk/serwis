@@ -10,7 +10,7 @@ create table comment
     primary key (id)
 );
 
-create table files
+create table file
 (
     place_id  int8 not null,
     file_name varchar(255)
@@ -30,21 +30,28 @@ create table place
     primary key (id)
 );
 
-create table rated_users
+create table rated_user
 (
     rated_user_id int8 not null,
     place_id      int8 not null,
     primary key (place_id, rated_user_id)
 );
 
-create table subscribers_places
+create  table rated_trip_user
+(
+    rated_user_id int8 not null,
+    trip_id      int8 not null,
+    primary key (trip_id, rated_user_id)
+);
+
+create table subscriber_place
 (
     subscriber_id int8 not null,
     place_id      int8 not null,
     primary key (place_id, subscriber_id)
 );
 
-create table tags
+create table tag
 (
     place_id int8 not null,
     tag      varchar(255)
@@ -55,6 +62,8 @@ create table trip
     id      int8 not null,
     name    varchar(255),
     user_id int8,
+    rating      int4 not null,
+    description    varchar(255),
     primary key (id)
 );
 
@@ -71,6 +80,12 @@ create table user_role
     roles   varchar(255)
 );
 
+create table message_type
+(
+    message_id int8 not null,
+    type   varchar(255)
+);
+
 create table usr
 (
     id       int8    not null,
@@ -84,19 +99,14 @@ create table usr
     primary key (id)
 );
 
-create table ban
+create table message
 (
     id       int8 not null,
-    type     varchar(255),
+    content     varchar(255),
+    author_id  int8,
     user_id  int8,
     place_id int8,
     primary key (id)
-);
-
-create table messages
-(
-    user_id int8 not null,
-    message varchar(255)
 );
 
 alter table if exists comment
@@ -112,32 +122,40 @@ alter table if exists comment
     add constraint comment_place_fk
         foreign key (place_id) references place;
 
-alter table if exists files
-    add constraint files_place_fk
+alter table if exists file
+    add constraint file_place_fk
         foreign key (place_id) references place;
 
 alter table if exists place
     add constraint place_user_fk
         foreign key (user_id) references usr;
 
-alter table if exists rated_users
-    add constraint users_place_fk
+alter table if exists rated_user
+    add constraint user_place_fk
         foreign key (place_id) references place;
 
-alter table if exists rated_users
-    add constraint place_users_fk
+alter table if exists rated_user
+    add constraint place_user_fk
         foreign key (rated_user_id) references usr;
 
-alter table if exists subscribers_places
-    add constraint subscribers_place_fk
+alter table if exists rated_trip_user
+    add constraint user_trip_fk
+        foreign key (trip_id) references trip;
+
+alter table if exists rated_trip_user
+    add constraint trip_user_fk
+        foreign key (rated_user_id) references usr;
+
+alter table if exists subscriber_place
+    add constraint subscriber_place_fk
         foreign key (place_id) references place;
 
-alter table if exists subscribers_places
-    add constraint places_subscriber_fk
+alter table if exists subscriber_place
+    add constraint place_subscriber_fk
         foreign key (subscriber_id) references usr;
 
-alter table if exists tags
-    add constraint tags_place_fk
+alter table if exists tag
+    add constraint tag_place_fk
         foreign key (place_id) references place;
 
 alter table if exists trip
@@ -156,6 +174,14 @@ alter table if exists user_role
     add constraint user_role_fk
         foreign key (user_id) references usr;
 
-alter table if exists messages
-    add constraint messages_user_fk
+alter table if exists message_type
+    add constraint message_type_fk
+        foreign key (message_id) references message;
+
+alter table if exists message
+    add constraint message_author_fk
+        foreign key (author_id) references usr;
+
+alter table if exists message
+    add constraint message_user_fk
         foreign key (user_id) references usr;

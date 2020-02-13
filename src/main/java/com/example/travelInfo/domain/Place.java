@@ -34,7 +34,7 @@ public class Place {
     private User author;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "files", joinColumns = @JoinColumn(name = "place_id"))
+    @CollectionTable(name = "file", joinColumns = @JoinColumn(name = "place_id"))
     @Column(name = "file_name")
     private Set<String> files = new HashSet<>();
 
@@ -47,14 +47,14 @@ public class Place {
             fetch = FetchType.EAGER
     )
     @JoinTable(
-            name = "subscribers_places",
+            name = "subscriber_place",
             joinColumns = { @JoinColumn(name = "place_id") },
             inverseJoinColumns = { @JoinColumn(name = "subscriber_id") }
     )
     private Set<User> users = new HashSet<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "tags", joinColumns = @JoinColumn(name = "place_id"))
+    @CollectionTable(name = "tag", joinColumns = @JoinColumn(name = "place_id"))
     @Column(name = "tag")
     private Set<String> tags = new HashSet<>();
 
@@ -70,7 +70,7 @@ public class Place {
             fetch = FetchType.EAGER
     )
     @JoinTable(
-            name = "rated_users",
+            name = "rated_user",
             joinColumns = { @JoinColumn(name = "place_id") },
             inverseJoinColumns = { @JoinColumn(name = "rated_user_id") }
     )
@@ -251,6 +251,10 @@ public class Place {
             }
         }
         return false;
+    }
+
+    public boolean isAuthor(User user){
+        return getAuthor().equals(user);
     }
 
     @Override

@@ -18,24 +18,10 @@
         <div class="collapse navbar-collapse">
         </div>
         <div class="imgUser"></div>
-        <a class="btn btn-info" th:href="@{/login}" th:if="${user == null}">Get started</a>
-        <div class="nav-item dropdown" th:if="${user.getUsername()}">
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-               aria-expanded="false">
-                <span th:text="${user.getUsername()}"></span>
-            </a>
-            <a class="btn btn-info navbar-btn" href="/map">+ Create place</a>
-            <a class="btn btn-info navbar-btn" href="/trip" data-toggle="modal" data-target="#CreatTripModal">+ Create
-                trip</a>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="/">Home</a>
-                <a class="dropdown-item" href="/map">Add new place</a>
-                <a class="dropdown-item" href="/places/my">My places</a>
-                <a class="dropdown-item" href="/profile">Profile</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" th:href="@{/logout}">Log out</a>
-            </div>
-        </div>
+        <th:block th:insert="${user == null}?
+        ~{fragments/general:: bar} :
+        ~{fragments/general:: barUser(${user.getUsername()})}">
+        </th:block>
     </nav>
 </header>
 <nav class="navbar navbar-expand-lg secondNav">
@@ -56,9 +42,6 @@
             </li>
             <li th:if="${user != null}" class="nav-item">
                 <div th:if="${user.isAdmin()}" class="nav-link" id="places-link">Places</div>
-            </li>
-            <li th:if="${user != null}" class="nav-item">
-                <div th:if="${user.isAdmin()}" class="nav-link" id="bans-link">Bans</div>
             </li>
         </ul>
     </div>
@@ -85,11 +68,33 @@
     </form>
 </div>
 
-<div class="content content-profile" id="messages-content" style="display: none">
-    <div class="" th:each="message : ${user.getMessages()}">
+<div class="content" id="messages-content" style="display: none">
+    <div class="" th:each="message : ${messages}" th:if="${!user.isAdmin()}">
         <div class="alert alert-secondary" role="alert">
-            <span th:text="${message}"></span>
+            <span th:text="${message.content}"></span>
         </div>
+    </div>
+    <div th:if="${user != null && user.isAdmin()}">
+        <table class="table">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">#id</th>
+                <th scope="col">Type</th>
+                <th scope="col">Content</th>
+                <th scope="col">Author</th>
+                <th scope="col">Place</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="message : ${messages}">
+                <th th:text="${message.getId()}"></th>
+                <td th:text="${message.getType()}"></td>
+                <td th:text="${message.getContent()}"></td>
+                <td th:text="${message.getAuthor().getId()}"></td>
+                <td th:text="${message.getPlace().getId()}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -123,12 +128,12 @@
                 </button>
             </td>
             <td th:if="${user.isLocked()}">
-                <form method="post" th:action="@{'/unlock/' + ${user.getId()}}">
+                <form method="get" th:action="@{'/unlock/' + ${user.getId()}}">
                     <button type="submit" class="btn btn-danger">Unlock</button>
                 </form>
             </td>
             <td th:unless="${user.isLocked()}">
-                <form method="post" th:action="@{'/block/' + ${user.getId()}}">
+                <form method="get" th:action="@{'/block/' + ${user.getId()}}">
                     <button type="submit" class="btn btn-danger">Block</button>
                 </form>
             </td>
@@ -170,21 +175,6 @@
     </table>
 </div>
 
-<div th:if="${user != null && user.isAdmin()}" class="content" id="bans-content">
-    <div th:each="ban : ${bans}">
-        <div class="alert alert-secondary" role="alert">
-            <span th:text="${ban.getId()}"></span>
-            <span th:text="${ban.getType()}"></span>
-            <span th:text="'Author of ban: ' + ${ban.getAuthor().getUsername()}"></span>
-            <a th:href="@{'/place/' + ${ban.getPlace().getId()} + '/view'}">See place</a>
-            <div class="ban-batns">
-                <a class="btn ban-btn btn-primary" th:href="'ban/accept/' + ${ban.getId()}">Accept</a>
-                <a class="btn btn-danger" th:href="'ban/reject/' + ${ban.getId()}">Reject</a>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="modal fade" id="NewMessageForm" tabindex="-1" role="dialog"
      aria-labelledby="ModalLabel"
      aria-hidden="true">
@@ -209,7 +199,8 @@
         </div>
     </div>
 </div>
-<script th:src="@{/js/index.js}"></script>
+<div th:insert="fragments/modal_form_new_trip :: newTrip"></div>
+<script th:src="@{/js/modals.js}"></script>
 <script th:src="@{/js/profile.js}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
         integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"

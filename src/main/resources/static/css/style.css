@@ -186,10 +186,6 @@ body {
     text-align: left;
 }
 
-.form-control{
-    margin-top: 20px;
-}
-
 .form-profile-data .form-control{
     margin: auto;
 }
@@ -200,6 +196,14 @@ body {
 
 .card-body{
     width: 250px;
+}
+
+.inline{
+    display: inline-block;
+}
+
+.form-group{
+    margin: 20px;
 }
 
 

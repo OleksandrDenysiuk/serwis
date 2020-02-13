@@ -17,9 +17,12 @@
     <input name="username"  type="text" id="inputUserName" class="form-control" placeholder="User name" required>
     <label for="inputPassword" class="sr-only">Password</label>
     <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-    <div class="alert alert-danger" th:if="${param.error}">
-        <span>Invalid username or password.</span>
-        <span>Your account was blocked.</span>
+    <div class="alert alert-danger" th:if="${param.error}"
+         th:with="errorMsg=${session['SPRING_SECURITY_LAST_EXCEPTION'].message}">
+        Reason: <span th:text="${errorMsg}">Wrong input!</span>
+    </div>
+    <div class="alert alert-danger" th:if="${error}">
+         <span th:text="${error}"></span>
     </div>
     <div class="alert alert-success" th:if="${param.logout}">
         You have been logged out.

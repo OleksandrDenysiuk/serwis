@@ -1,18 +1,24 @@
 package com.example.travelInfo.domain;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-public class Comment {
+public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @ElementCollection(targetClass = MessageType.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "message_type", joinColumns = @JoinColumn(name = "message_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<MessageType> type;
 
     private String content;
 
     @ManyToOne(
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "author_id")
     private User author;
 
     @ManyToOne(
@@ -22,27 +28,16 @@ public class Comment {
 
     @ManyToOne(
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "trip_id")
-    private Trip trip;
+    @JoinColumn(name = "user_id")
+    private User userFor;
 
-    public Comment() {
+    public Message() {
     }
 
-    public Comment(String content, User author, Place place) {
+    public Message( String content, User author, User userFor) {
         this.content = content;
         this.author = author;
-        this.place = place;
-    }
-
-    public Comment(String content, User author, Trip trip) {
-        this.content = content;
-        this.author = author;
-        this.trip = trip;
-    }
-
-    public Comment(String content, User author) {
-        this.content = content;
-        this.author = author;
+        this.userFor = userFor;
     }
 
     public Long getId() {
@@ -51,6 +46,14 @@ public class Comment {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Set<MessageType> getType() {
+        return type;
+    }
+
+    public void setType(Set<MessageType> type) {
+        this.type = type;
     }
 
     public String getContent() {
@@ -77,23 +80,11 @@ public class Comment {
         this.place = place;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        return id.intValue() * 31;
+    public User getUserFor() {
+        return userFor;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Comment other = (Comment) obj;
-        if (id != other.id)
-            return false;
-        return true;
+    public void setUserFor(User userFor) {
+        this.userFor = userFor;
     }
 }

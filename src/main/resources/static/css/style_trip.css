@@ -1,0 +1,26 @@
+.trip-name{
+    margin: 0;
+    text-align: center;
+    padding-top: 13px;
+}
+
+.rating{
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.container-inline{
+    text-align: center;
+}
+
+.item{
+    margin: 8px 23px;
+}
+
+.edit-form-trip{
+    text-align: center;
+}
+
+form .stars {
+     margin: 0 auto;
+}

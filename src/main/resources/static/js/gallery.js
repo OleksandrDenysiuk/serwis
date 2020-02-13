@@ -1,3 +1,4 @@
+
 (function (Comp) {
     Comp.fn.gallery = function(options) {
 

@@ -1,7 +1,9 @@
 window.onload = function() {
     var rating = document.getElementById("rating").value;
-    //alert(rating);
-    document.getElementById("star-" + rating).checked = true;
+    if(rating !== "0"){
+        document.getElementById("star-" + rating).checked = true;
+    }
+
 };
 
 function show() {
@@ -11,11 +13,9 @@ function show() {
         .style.display = "none";
 }
 
-
-var submitRating = document.getElementById('ratingsForm');
-var rate = document.getElementById("rating");
-
-function rateThisShit(score) {
+function rate(score) {
+    var submitRating = document.getElementById('ratingsForm');
+    var rate = document.getElementById("rating");
     rate.value = score.toString();
     submitRating.submit();
 }

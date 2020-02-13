@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User places</title>
+</head>
+<body>
+<div class="content" th:fragment="content(places)">
+    <tr th:each="place: ${places}">
+        <div class="card" style="width: 18rem;">
+            <div class="image"><img th:src="@{'/images/' + ${place.getOneFile()}}" class="card-img-top" alt="..."></div>
+            <div class="card-body">
+                <div class="info-with-icon">
+                    <div class="imgUser inPlace"></div>
+                    <div class="user-group user-name"><span class="card-title" th:text="${place.authorName}"></span></div>
+                </div>
+                <div class="info-with-icon">
+                    <div id="place" class="type-icon" th:classappend="${place.type}"></div>
+                    <div class="place-address"><span class="address" th:text="${place.address}"></span></div>
+                </div>
+                <a th:href="@{'/adventure/place/' + ${place.id} + '/details'}" class="btn-link">View Details</a>
+                <a th:href="@{${place.id} + '/delete'}" class="btn btn-danger">DELETE</a>
+            </div>
+        </div>
+    </tr>
+</div>
+</body>
+</html>

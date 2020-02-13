@@ -12,10 +12,6 @@
     height: 220px;
 }
 
-.form-group{
-    margin: 20px;
-}
-
 .stars{
     position: absolute;
     right: 0;
@@ -98,3 +94,11 @@ label{
     padding-top: 15px;
     padding-bottom: 5px;
 }
+
+.filter-sort{
+    width: 213px;
+    text-align: right;
+    margin-right: 0;
+    margin-left: auto;
+}
+

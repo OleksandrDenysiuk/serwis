@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-public class FilrerController {
+public class FilterController {
 
     @Autowired
     private PlaceRepository placeRepository;
@@ -36,48 +36,61 @@ public class FilrerController {
                                @RequestParam String tags,
                                Model model) {
 
-        if(user != null){
-            model.addAttribute("user",user);
+        if (user != null) {
+            model.addAttribute("user", user);
         }
 
         List<Place> places = placeRepository.findAll();
 
-        if (location != ""){
+        if (location != "") {
             places.retainAll(placeRepository.findAllByAddress(location));
+            model.addAttribute("location", location);
         }
 
-        if(type != null){
+        if (type != null) {
             List<Place> placesByTypes = new ArrayList<>();
-            for(String str : type){
+            for (String str : type) {
                 List<Place> placesByType = placeRepository.findAllByType(str);
-                if (placesByType.size() != 0){
+                if (placesByType.size() != 0) {
                     placesByTypes.addAll(placesByType);
                 }
+                model.addAttribute(str, str);
             }
             places.retainAll(placesByTypes);
         }
 
-        if(owner != null) {
-            if(owner.equals("myPlaces")){
-                places = placeRepository.findAllByAuthor(user);
-            }else if(owner.equals("notMyPLaces")){
-                places.removeAll(placeRepository.findAllByAuthor(user));
+        if (owner != null) {
+            List<Place> placesByOwner;
+            if (owner.equals("myPlaces")) {
+                placesByOwner = placeRepository.findAllByAuthor(user);
+                model.addAttribute("myPlaces", true);
+            } else if (owner.equals("notMyPlaces")) {
+                placesByOwner = placeRepository.findAll();
+                placesByOwner.removeAll(placeRepository.findAllByAuthor(user));
+                model.addAttribute("notMyPlaces", true);
+            }else {
+                placesByOwner = placeRepository.findAll();
+                model.addAttribute("allPlaces", true);
             }
+            places.retainAll(placesByOwner);
         }
 
         if (tags != "") {
+            String tagsCallBack = "";
             List<Place> placesByTags = new ArrayList<>();
-            for(String tag : tags.split(",")){
+            for (String tag : tags.split(",")) {
                 List<Place> placesByTag = placeRepository.findAllByTags(tag);
-                if (placesByTag.size() != 0){
+                if (placesByTag.size() != 0) {
                     placesByTags.addAll(placesByTag);
                 }
+                tagsCallBack += tag + ",";
             }
+            model.addAttribute("tags", tagsCallBack);
             places.retainAll(placesByTags);
         }
 
 
-        model.addAttribute("places",places);
+        model.addAttribute("places", places);
         return "index";
     }
 
@@ -85,48 +98,61 @@ public class FilrerController {
     public String searchTrips(@AuthenticationPrincipal User user,
                               @RequestParam String author,
                               @RequestParam(required = false) String owner,
-                              @RequestParam String amount,
+                              @RequestParam(defaultValue = "0 - 0") String amount,
                               Model model) {
 
-        if(user != null){
-            model.addAttribute("user",user);
+        if (user != null) {
+            model.addAttribute("user", user);
         }
 
         List<Trip> trips = tripRepository.findAll();
 
-        if (author != ""){
+        if (author != "") {
             trips.retainAll(
                     tripRepository.findAllByAuthor(
                             userRepository.findByUsername(author)
                     )
             );
+            model.addAttribute("author", author);
         }
 
-        if(owner != null) {
-            if(owner.equals("myPlaces")){
-                trips = tripRepository.findAllByAuthor(user);
-            }else if(owner.equals("notMyPLaces")){
-                trips.removeAll(tripRepository.findAllByAuthor(user));
+        if (owner != null) {
+            List<Trip> tripsByOwner;
+            if (owner.equals("myTrips")) {
+                tripsByOwner = tripRepository.findAllByAuthor(user);
+                model.addAttribute("myTrips", true);
+            } else if (owner.equals("notMyTrips")) {
+                tripsByOwner = tripRepository.findAll();
+                tripsByOwner.removeAll(tripRepository.findAllByAuthor(user));
+                model.addAttribute("notMyTrips", true);
+            } else {
+                tripsByOwner = tripRepository.findAll();
+                model.addAttribute("allTrips", true);
             }
+            trips.retainAll(tripsByOwner);
         }
 
         int step = 1;
         List<Trip> copy = new ArrayList<>(trips);
-        for (String str : amount.split(" - ")){
-            for(Trip trip : copy){
-                if(trip.getPlaces().size() < Integer.valueOf(str) && step == 1){
+        String[] range = amount.split(" - ");
+        for (String str : range) {
+            for (Trip trip : copy) {
+                if (trip.getPlaces().size() < Integer.valueOf(str) && step == 1) {
                     trips.remove(trip);
                 }
-                if(trip.getPlaces().size() > Integer.valueOf(str) && step == 2){
+                if (trip.getPlaces().size() > Integer.valueOf(str) && step == 2) {
                     trips.remove(trip);
                 }
             }
             step++;
         }
 
+        model.addAttribute("start",range[0]);
+        model.addAttribute("finish",range[1]);
 
-
-        model.addAttribute("trips",trips);
+        model.addAttribute("trips", trips);
         return "index";
     }
+
+
 }

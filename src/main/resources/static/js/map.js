@@ -3,6 +3,17 @@ var map;
 var icon;
 
 function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 14,
+        center: {lat: 51.25052702419269, lng: 22.57244110107422},
+        mapTypeControl: false
+    });
+    var marker = new google.maps.Marker({
+        map: map
+    });
+
+    initDataOnMap(map, marker);
+
     var type = document.getElementById("type");
 
     var icon_food = {
@@ -18,12 +29,6 @@ function initMap() {
         scaledSize: new google.maps.Size(50, 50), // scaled size
     };
 
-    map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 14,
-        center: {lat: 51.25052702419269, lng: 22.57244110107422},
-        mapTypeControl: false
-    });
-
     map.addListener('click', function (e) {
         if (icon == undefined) {
             alert("Please choose type of place!")
@@ -38,16 +43,15 @@ function initMap() {
         }
     });
 
-    var myLatLng = {lat: -25.363, lng: 131.044};
-
-
-    var marker = new google.maps.Marker({
-        map: map
-    });
 
     var addressContener = document.getElementById("addressContainer");
 
-    var controlMarkers = document.getElementById("controlMarkers");
+    if (getDataPlace() == null) {
+        var leftBar = document.getElementById("leftBar");
+    } else {
+        var leftBar = document.getElementById("leftBarEdit");
+    }
+
 
     var imgContener1 = document.getElementById("place");
     imgContener1.addEventListener('click', event => {
@@ -98,22 +102,19 @@ function initMap() {
     var btnAdd = document.getElementById("btnAdd").addEventListener('click', event => {
         console.log($("#address").value);
         var $fileUpload = $("input[type='file']");
-        if ($("#address").val() == null) {
-            alert("Please choose point on map!")
-        } else if(parseInt($fileUpload.get(0).files.length) == 0) {
-            alert("Amount of upload files cannot be 0.");
-        } else {
-            document.getElementById("tags").value = tagsTest;
-            document.getElementById("form").submit();
-        }
+        document.getElementById("tags").value = tagsTest;
+        document.getElementById("form").submit();
     });
 
     document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
     var input = document.getElementById("button-addon3");
 
-    var tags = "";
     var tagsTest = [];
+    var data = getDataPlace();
+    if (data != null) {
+        tagsTest = data.tags;
+    }
 
     document.getElementById("inputTags")
         .addEventListener("keyup", function (event) {
@@ -124,9 +125,7 @@ function initMap() {
                 newTag.innerHTML = value;
                 input.appendChild(newTag);
                 document.getElementById("inputTags").value = "";
-                tags += "#" + value;
                 tagsTest.push(value);
-                console.log("Push: " + tagsTest);
             }
         });
     document.getElementById("inputTags")
@@ -136,19 +135,15 @@ function initMap() {
             if (event.keyCode === 8 && value === "") {
                 tagsContainer.removeChild(tagsContainer.lastChild);
                 tagsTest.pop();
-                console.log("Pop: " + tagsTest);
             }
         });
 
-    map.controls[google.maps.ControlPosition.LEFT_TOP].push(controlMarkers);
+    map.controls[google.maps.ControlPosition.LEFT_TOP].push(leftBar);
 
-    function showError(errorName) {
-        var error = document.createElement('div');
-        error.className = "invalid-feedback";
-        error.innerHTML = errorName;
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(
+        document.getElementById("btnsReturn")
+    );
 
-        map.controls[google.maps.ControlPosition.TOP_CENTER].push(error);
-    }
 }
 
 function placeMarkerAndPanTo(latLng, map, icon, marker) {
@@ -178,11 +173,8 @@ function addAddress(callback, latLng) {
                 storableLocation.country = component.long_name;
                 storableLocation.registered_country_iso_code = component.short_name;
             }
-
         }
-        ;
         callback(storableLocation);
-        console.log(storableLocation);
     });
 }
 
@@ -193,52 +185,187 @@ function handleFileSelect(evt) {
 
     var containerImages = document.createElement('output');
     containerImages.id = 'list';
-    document.getElementById("controlMarkers").insertBefore(containerImages, document.getElementById("form"));
+
+    if (getDataPlace() == null) {
+        document.getElementById("leftBar").insertBefore(containerImages, document.getElementById("form"));
+    } else {
+        document.getElementById("leftBarEdit").insertBefore(containerImages, document.getElementById("form"));
+    }
+
 
     var files = evt.target.files; // FileList object
 
-    // Loop through the FileList and render image files as thumbnails.
-    for (var i = 0, f; f = files[i]; i++) {
+    if (files.length > 9) {
+        var div = document.createElement('div');
+        div.innerHTML = "<div class=\"alert alert-danger\" role=\"alert\">\n" +
+            "  Max 9 images. Try again!\n" +
+            "</div>"
+        document.getElementById('list').insertBefore(div, null);
+    } else {
+        // Loop through the FileList and render image files as thumbnails.
+        for (var i = 0, f; f = files[i]; i++) {
 
-        // Only process image files.
-        if (!f.type.match('image.*')) {
-            continue;
+            // Only process image files.
+            if (!f.type.match('image.*')) {
+                continue;
+            }
+
+            var reader = new FileReader();
+
+            // Closure to capture the file information.
+            reader.onload = (function (theFile) {
+                return function (e) {
+                    // Render thumbnail.
+                    var div = document.createElement('div');
+                    div.className = "block btn-group";
+                    div.innerHTML = ['<img class="thumb" src="', e.target.result,
+                        '" title="', escape(theFile.name), '"/>'].join('');
+                    document.getElementById('list').insertBefore(div, null);
+                };
+            })(f);
+
+            // Read in the image file as a data URL.
+            reader.readAsDataURL(f);
+        }
+    }
+}
+
+function getIconByType(type) {
+    switch (type) {
+        case "food":
+            return {
+                url: 'https://firebasestorage.googleapis.com/v0/b/travelinfo-1cc54.appspot.com/o/bar.png?alt=media&token=1a2506f3-7e66-4fdb-b282-9c3eb1c1eff1', // url
+                scaledSize: new google.maps.Size(50, 50), // scaled size
+            };
+        case "sleep":
+            return {
+                url: 'https://firebasestorage.googleapis.com/v0/b/travelinfo-1cc54.appspot.com/o/hotel.png?alt=media&token=53a39efd-ec02-445d-8c8f-f2c16cc21d52', // url
+                scaledSize: new google.maps.Size(50, 50), // scaled size
+            };
+        case "place":
+            return {
+                url: 'https://firebasestorage.googleapis.com/v0/b/travelinfo-1cc54.appspot.com/o/building.png?alt=media&token=b33b0163-8293-4492-be83-d0120c4f49f9', // url
+                scaledSize: new google.maps.Size(50, 50), // scaled size
+            };
+    }
+}
+
+function initMapPlaceDetails() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 14,
+        center: {lat: 51.25052702419269, lng: 22.57244110107422},
+        mapTypeControl: false,
+        zoomControl: false,
+        streetViewControl: false,
+        fullscreenControl: false
+    });
+
+    var marker = new google.maps.Marker({
+        map: map
+    });
+
+    placeMarkerAndPanTo(getLatLong(),
+        map,
+        getIconByType(getType()),
+        marker);
+
+    map.controls[google.maps.ControlPosition.LEFT_TOP].push(
+        document.getElementById("leftBarViewDetails"));
+    map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
+        document.getElementById("rightBarViewDetails"));
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(
+        document.getElementById("btnsReturn")
+    );
+}
+
+function initMapTripDetails() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 14,
+        center: {lat: 51.25052702419269, lng: 22.57244110107422},
+        mapTypeControl: false,
+        zoomControl: false,
+        streetViewControl: false,
+        fullscreenControl: false
+    });
+
+    var data = getDataTrip();
+
+    function printElt(element, index, array) {
+        var marker = new google.maps.Marker({
+            map: map
+        });
+        console.log(data);
+        placeMarkerAndPanTo(element.latLng, map, getIconByType(element.type), marker);
+    }
+
+    data.forEach(printElt);
+
+    map.controls[google.maps.ControlPosition.LEFT_TOP].push(
+        document.getElementById("leftBarViewDetails"));
+    map.controls[google.maps.ControlPosition.RIGHT_TOP].push(
+        document.getElementById("rightBarViewDetails"));
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(
+        document.getElementById("btnsReturn")
+    );
+}
+
+function initDataOnMap(map, marker) {
+    if (getDataPlace() !== null) {
+        //get data onload page from spring veriable
+        var place = getDataPlace();
+
+        //set css on type button
+        var btnType = document.getElementById(place.type.toString());
+        btnType.style.backgroundColor = "#e0e3e7";
+
+        //set marker
+        placeMarkerAndPanTo(place.latlong, map, getIconByType(place.type.toString()), marker);
+
+        // set images
+        var containerImages = document.createElement('output');
+        containerImages.id = 'list';
+        document.getElementById("leftBarEdit").insertBefore(containerImages, document.getElementById("form"));
+        for (var i = 0, f; f = place.files[i]; i++) {
+            var div = document.createElement('div');
+            div.className = "block btn-group";
+            div.innerHTML = ['<img class="thumb" src="/images/', f.toString(),
+                '" title=""/>'].join('');
+            document.getElementById('list').insertBefore(div, null);
         }
 
-        var reader = new FileReader();
+        //set description
+        document.getElementById("description").value = place.description;
 
-        // Closure to capture the file information.
-        reader.onload = (function (theFile) {
-            return function (e) {
-                // Render thumbnail.
-                var div = document.createElement('div');
-                div.className = "block btn-group";
-                div.innerHTML = ['<img class="thumb" src="', e.target.result,
-                    '" title="', escape(theFile.name), '"/>'].join('');
-                document.getElementById('list').insertBefore(div, null);
+        //set tags
+        for (var i = 0, f; f = place.tags[i]; i++) {
+            addTag(f);
+        }
 
-            };
-        })(f);
-
-        // Read in the image file as a data URL.
-        reader.readAsDataURL(f);
+        $("#type").val(place.type);
+        $("#latitude").val(place.latlong.lat);
+        $("#longitude").val(place.latlong.lng);
+        $("#address").val(place.address);
+        $("#tags").val(place.tags);
     }
 
 }
 
-function onSelect(e) {
-    if (e.files.length > 5) {
-        alert("Only 5 files accepted.");
-        e.preventDefault();
-    }
+function addTag(value) {
+    var input = document.getElementById("button-addon3");
+    var newTag = document.createElement("span");
+    newTag.className = "input-group-text";
+    newTag.innerHTML = value;
+    input.appendChild(newTag);
+    document.getElementById("inputTags").value = "";
 }
 
-function zalupa() {
-    if (document.getElementById('files')[0].files.length > 2) {
-        alert("You can select only 2 images");
-        document.getElementById('files').preventDefault();
-    }
-}
+
+$("#btn-edit-trip").click(function () {
+    $("#form-edit-trip").submit();
+});
+
+
+
 
 
 

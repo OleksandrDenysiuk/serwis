@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+>
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -12,11 +12,36 @@
 <form class="form-user-data" th:action="@{/registration}" method="post">
     <img class="mb-4" src="https://firebasestorage.googleapis.com/v0/b/travelinfo-1cc54.appspot.com/o/user.png?alt=media&token=05341b68-a8b3-4c62-b15c-56e31acab120" alt="" width="72" height="72">
     <h1 class="h3 mb-3 font-weight-normal text-center">Please sign up</h1>
-    <input type="text" name="username" class="form-control" placeholder="Nickname" required>
-    <input type="text" name="name" class="form-control" placeholder="Name" required>
-    <input type="text" name="surname" class="form-control" placeholder="Surname" required>
-    <input type="password" name="password" class="form-control" placeholder="Password" required>
-    <input type="email" name="email" class="form-control" placeholder="some@some.com" required>
+    <input type="text" name="username" class="form-control" placeholder="Nickname"
+           th:classappend="${usernameError}?'is-invalid':''" th:value="${user}?${user.username}:''">
+    <div class="invalid-feedback">
+        <span th:text="${usernameError}"></span>
+    </div>
+    <input type="text" name="name" class="form-control" placeholder="Name"
+           th:classappend="${nameError}?'is-invalid':''" th:value="${user}?${user.name}:''">
+    <div class="invalid-feedback">
+        <span th:text="${nameError}"></span>
+    </div>
+    <input type="text" name="surname" class="form-control" placeholder="Surname"
+           th:classappend="${surnameError}?'is-invalid':''" th:value="${user}?${user.surname}:''">
+    <div class="invalid-feedback">
+        <span th:text="${surnameError}"></span>
+    </div>
+    <input type="password" name="password" class="form-control" placeholder="Password"
+           th:classappend="${passwordError}?'is-invalid':''">
+    <div class="invalid-feedback">
+        <span th:text="${passwordError}"></span>
+    </div>
+    <input type="password" name="password2" class="form-control" placeholder="Confirm password"
+           th:classappend="${password2Error}?'is-invalid':''">
+    <div class="invalid-feedback">
+        <span th:text="${password2Error}"></span>
+    </div>
+    <input type="email" name="email" class="form-control" placeholder="some@some.com"
+           th:classappend="${emailError}?'is-invalid':''" th:value="${user}?${user.email}:''">
+    <div class="invalid-feedback">
+        <span th:text="${emailError}"></span>
+    </div>
     <div class="alert alert-danger" th:if="${message}">
         <span th:text="${message}"></span>
     </div>

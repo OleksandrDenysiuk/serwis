@@ -1,37 +1,29 @@
-.card:hover{
-    box-shadow: 0 2px 6px 0 #e0e4e7,
-    inset -1px 0 0 0 rgba(224, 227, 231, .3),
-    inset 0 -1px 0 0 #e0e4e7,
-    inset 1px 0 0 0 rgba(224, 227, 231, .2);
-    cursor: pointer;
+#leftBarViewDetails{
+    text-align: left;
 }
 
-.image {
-    width: 286px;
-    height: 190px;
-    display: block;
+.contener{
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+.images {
+    width: 395px;
+    height: 300px;
+    display: inline-block;
     background-size: cover;
-    margin: auto;
 }
 
-.image img {
+.images img {
     -o-object-fit: cover;
     object-fit: cover;
-    height: 190px;
+    width: 395px;
+    height: 300px;
 }
 
-.content{
-    width: 85%;
-    margin: auto;
-    display: block;
-}
-
-.optionDefault{
-    display: none;
-}
-
-.card{
-    display: inline-block;
+.info-container{
+    display: flex;
+    align-items: center;
 }
 
 .food{
@@ -44,41 +36,27 @@
     background: url('https://firebasestorage.googleapis.com/v0/b/travelinfo-1cc54.appspot.com/o/hotel.png?alt=media&token=53a39efd-ec02-445d-8c8f-f2c16cc21d52') no-repeat center/cover;
 }
 
-
-
-.type-icon{
-    width: 39px;
-    height: 39px;
-    display: inline-block;
-}
-
-.info-with-icon{
-    display: flex;
-    align-items: center;
-}
-
-.imgUser{
+.user{
     border-radius: 50%;
     background: url("https://firebasestorage.googleapis.com/v0/b/travelinfo-1cc54.appspot.com/o/user.png?alt=media&token=05341b68-a8b3-4c62-b15c-56e31acab120") no-repeat center/cover;
 }
 
-.inPlace{
+.icon-properties{
     width: 39px;
     height: 39px;
-}
-
-.user-group{
     display: inline-flex;
 }
 
-.user-name{
+.text-properties{
+    display: inline-flex;
     padding: 10px;
 }
 
-.place-address{
-    display: inline-block;
+.text{
+    font-size: 1.1rem;
+    font-weight: 500;
 }
 
-.address{
-    line-height: 2.3;
+.text-description{
+    font-size: 1rem;
 }
